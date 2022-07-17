@@ -23,6 +23,7 @@ namespace Backend_Homework_Pronia.DAL
         public DbSet<PlantSize> PlantSizes { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<PlantTag> PlantTags { get; set; }
+        public DbSet<Setting> Settings { get; set; }
 
 
 
@@ -35,7 +36,8 @@ namespace Backend_Homework_Pronia.DAL
             {
                 item.SetColumnType("decimal(6,2)");
             }
-            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Setting>().HasIndex(p => p.Key).IsUnique();
+          base.OnModelCreating(modelBuilder);
         }
     }
 }

@@ -1,4 +1,6 @@
 using Backend_Homework_Pronia.DAL;
+
+using Backend_Homework_Pronia.Service;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -30,6 +32,8 @@ namespace Backend_Homework_Pronia
             {
                 opt.UseSqlServer(_configuration.GetConnectionString("default"));
             });
+            services.AddScoped<LayoutService>();
+            services.AddHttpContextAccessor();
 
         }
 

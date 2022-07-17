@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject Backend_Homework_Pronia.Service.LayoutService layoutService;
+
+<!DOCTYPE html>
 <html lang="zxx">
 <head>
     <meta charset="UTF-8" />
@@ -97,11 +99,11 @@
                             <div class="header-middle-wrap position-relative">
                                 <div class="header-contact d-none d-lg-flex">
                                     <i class="pe-7s-call"></i>
-                                    <a href="tel://+00-123-456-789">+00 123 456 789</a>
+                                    <a href="tel://@layoutService.GetSettings().FirstOrDefault(p=>p.Key.Trim().ToLower()== "phonenumber")?.Value">@layoutService.GetSettings().FirstOrDefault(p=>p.Key.Trim().ToLower()== "phonenumber")?.Value</a>
                                 </div>
 
                                 <a asp-controller="home" asp-action="index" class="header-logo">
-                                    <img src="~/assets/images/logo/dark.png" alt="Header Logo" />
+                                    <img src="~/assets/images/logo/@layoutService.GetSettings().FirstOrDefault(p=>p.Key.Trim().ToLower() == "headerlogo")?.Value" alt="@layoutService.GetSettings().FirstOrDefault(p=>p.Key.Trim().ToLower()=="headerlogo")?.Key" />
                                 </a>
 
                                 <div class="header-right">
@@ -111,7 +113,7 @@
                                                class="search-btn bt"
                                                data-bs-toggle="modal"
                                                data-bs-target="#exampleModal">
-                                                <i class="pe-7s-search"></i>
+                                                @Html.Raw(layoutService.GetSettings().FirstOrDefault(p => p.Key.Trim().ToLower() == "searchicon")?.Value)
                                             </a>
                                         </li>
                                         <li class="dropdown d-none d-lg-block">
@@ -141,7 +143,20 @@
                                         <li class="minicart-wrap me-3 me-lg-0">
                                             <a href="#miniCart" class="minicart-btn toolbar-btn">
                                                 <i class="pe-7s-shopbag"></i>
-                                                <span class="quantity">3</span>
+                                                <span class="quantity">
+                                                    @(layoutService.GetBasket() != null ? layoutService.GetBasket().BasketItemVMs.Count.ToString() : "0")
+
+                                                    @*Task for showing all Items in the basket*@
+                                                    @*@{
+                                                        int quantity = 0;
+                                                        foreach (var cookie in layoutService.GetBasket().BasketCookieItems)
+                                                        {
+                                                            quantity += cookie.Quantity;
+                                                        }
+                                                        @quantity
+                                                      
+                                                    }*@
+                                                </span>
                                             </a>
                                         </li>
                                         <li class="mobile-menu_wrap d-block d-lg-none">
@@ -452,7 +467,19 @@
                                         <li class="minicart-wrap me-3 me-lg-0">
                                             <a href="#miniCart" class="minicart-btn toolbar-btn">
                                                 <i class="pe-7s-shopbag"></i>
-                                                <span class="quantity">3</span>
+                                                <span class="quantity">
+                                                    @(layoutService.GetBasket() != null ? layoutService.GetBasket().BasketItemVMs.Count.ToString() : "0")
+                                                    @*Task for showing all Items in the basket*@
+                                                    @*@{
+            int quantity = 0;
+            foreach (var cookie in layoutService.GetBasket().BasketCookieItems)
+            {
+                quantity += cookie.Quantity;
+            }
+            @quantity
+
+        }*@
+                                                </span>
                                             </a>
                                         </li>
                                         <li class="mobile-menu_wrap d-block d-lg-none">
@@ -813,77 +840,41 @@
                             </a>
                         </div>
                         <ul class="minicart-list">
-                            <li class="minicart-product">
-                                <a class="product-item_remove" href="#">
-                                    <i class="pe-7s-close"
-                                       data-tippy="Remove"
-                                       data-tippy-inertia="true"
-                                       data-tippy-animation="shift-away"
-                                       data-tippy-delay="50"
-                                       data-tippy-arrow="true"
-                                       data-tippy-theme="sharpborder"></i>
-                                </a>
-                                <a href="single-product-variable.html"
-                                   class="product-item_img">
-                                    <img class="img-full"
-                                         src="~/assets/images/product/small-size/2-1-70x78.png"
-                                         alt="Product Image" />
-                                </a>
-                                <div class="product-item_content">
-                                    <a class="product-item_title"
-                                       href="single-product-variable.html">American Marigold</a>
-                                    <span class="product-item_quantity">1 x $23.45</span>
-                                </div>
-                            </li>
-                            <li class="minicart-product">
-                                <a class="product-item_remove" href="#">
-                                    <i class="pe-7s-close"
-                                       data-tippy="Remove"
-                                       data-tippy-inertia="true"
-                                       data-tippy-animation="shift-away"
-                                       data-tippy-delay="50"
-                                       data-tippy-arrow="true"
-                                       data-tippy-theme="sharpborder"></i>
-                                </a>
-                                <a href="single-product-variable.html"
-                                   class="product-item_img">
-                                    <img class="img-full"
-                                         src="~/assets/images/product/small-size/2-2-70x78.png"
-                                         alt="Product Image" />
-                                </a>
-                                <div class="product-item_content">
-                                    <a class="product-item_title"
-                                       href="single-product-variable.html">Black Eyed Susan</a>
-                                    <span class="product-item_quantity">1 x $25.45</span>
-                                </div>
-                            </li>
-                            <li class="minicart-product">
-                                <a class="product-item_remove" href="#">
-                                    <i class="pe-7s-close"
-                                       data-tippy="Remove"
-                                       data-tippy-inertia="true"
-                                       data-tippy-animation="shift-away"
-                                       data-tippy-delay="50"
-                                       data-tippy-arrow="true"
-                                       data-tippy-theme="sharpborder"></i>
-                                </a>
-                                <a href="single-product-variable.html"
-                                   class="product-item_img">
-                                    <img class="img-full"
-                                         src="~/assets/images/product/small-size/2-3-70x78.png"
-                                         alt="Product Image" />
-                                </a>
-                                <div class="product-item_content">
-                                    <a class="product-item_title"
-                                       href="single-product-variable.html">Bleeding Heart</a>
-                                    <span class="product-item_quantity">1 x $30.45</span>
-                                </div>
-                            </li>
+                            @if (layoutService.GetBasket() != null)
+                            {
+                                @foreach (BasketItemVM plant in layoutService.GetBasket().BasketItemVMs)
+                                {
+                                    <li class="minicart-product">
+                                        <a class="product-item_remove" asp-controller="plant" asp-action="RemoveItemFromBasket" asp-route-id="@plant.Plant.Id">
+                                            <i class="pe-7s-close"
+                                               data-tippy="Remove"
+                                               data-tippy-inertia="true"
+                                               data-tippy-animation="shift-away"
+                                               data-tippy-delay="50"
+                                               data-tippy-arrow="true"
+                                               data-tippy-theme="sharpborder"></i>
+                                        </a>
+                                        <a href="single-product-variable.html"
+                                           class="product-item_img">
+                                            <img class="img-full"
+                                                 src="~/assets/images/website-images/@plant.Plant.PlantImages.FirstOrDefault(p=>p.IsMain==true).Name"
+                                                 alt="@plant.Plant.PlantImages.FirstOrDefault(p=>p.IsMain==true).Alternative" />
+                                        </a>
+                                        <div class="product-item_content">
+                                            <a class="product-item_title"
+                                               href="single-product-variable.html">@plant.Plant.Name</a>
+                                            <span class="product-item_quantity">@plant.Quantity x $@plant.Plant.Price</span>
+                                        </div>
+                                    </li>
+                                }
+                            }
+
+
                         </ul>
                     </div>
                     <div class="minicart-item_total">
                         <span>Subtotal</span>
-                        <span class="ammount">$79.35</span>
+                        <span class="ammount">$@layoutService.GetBasket()?.TotalPrice</span>
                     </div>
                     <div class="group-btn_wrap d-grid gap-2">
                         <a href="cart.html" class="btn btn-dark">View Cart</a>
@@ -1266,7 +1257,24 @@
         <script src="~/assets/js/plugins/ion.rangeSlider.min.js"></script>
         <script src="~/assets/js/plugins/mailchimp-ajax.js"></script>
         <script src="~/assets/js/plugins/jquery.counterup.js"></script>
+    <script>
 
+        const QuickViewBtnElements = document.querySelectorAll(".quuickview-btn a");
+        const quickModalParentElement = document.querySelector("#quickModal");
+
+        QuickViewBtnElements.forEach(btn => btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            const hrefAttribute = e.currentTarget.getAttribute("href");
+            console.log(hrefAttribute)
+            fetch(hrefAttribute)
+                .then(res => res.text())
+                .then(data => {
+                    console.log(data)
+                    quickModalParentElement.innerHTML = data
+                });
+        }))
+        
+    </script>
         <!--Main JS (Common Activation Codes)-->
         <script src="~/assets/js/main.js"></script>
 </body>
