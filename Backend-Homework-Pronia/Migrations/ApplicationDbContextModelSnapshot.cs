@@ -27,9 +27,14 @@ namespace Backend_Homework_Pronia.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)")
+                        .HasMaxLength(20);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Categories");
                 });
@@ -42,11 +47,13 @@ namespace Backend_Homework_Pronia.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(25)")
+                        .HasMaxLength(25);
 
                     b.HasKey("Id");
 
-                    b.ToTable("Color");
+                    b.ToTable("Colors");
                 });
 
             modelBuilder.Entity("Backend_Homework_Pronia.Models.Plant", b =>
@@ -243,11 +250,13 @@ namespace Backend_Homework_Pronia.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(35)")
+                        .HasMaxLength(35);
 
                     b.HasKey("Id");
 
-                    b.ToTable("Size");
+                    b.ToTable("Sizes");
                 });
 
             modelBuilder.Entity("Backend_Homework_Pronia.Models.Slider", b =>
@@ -258,12 +267,15 @@ namespace Backend_Homework_Pronia.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Article")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ButtonUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Discount")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
@@ -273,6 +285,7 @@ namespace Backend_Homework_Pronia.Migrations
                         .HasColumnType("tinyint");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

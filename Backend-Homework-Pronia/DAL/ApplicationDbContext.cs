@@ -19,12 +19,13 @@ namespace Backend_Homework_Pronia.DAL
         public DbSet<PlantInformation> PlantInformations { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<PlantCategory> PlantCategories { get; set; }
+        public DbSet<Color> Colors { get; set; }
         public DbSet<PlantColor> PlantColors { get; set; }
+        public DbSet<Size> Sizes { get; set; }
         public DbSet<PlantSize> PlantSizes { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<PlantTag> PlantTags { get; set; }
         public DbSet<Setting> Settings { get; set; }
-
 
 
 
@@ -37,6 +38,7 @@ namespace Backend_Homework_Pronia.DAL
                 item.SetColumnType("decimal(6,2)");
             }
             modelBuilder.Entity<Setting>().HasIndex(p => p.Key).IsUnique();
+            modelBuilder.Entity<Category>().HasIndex(p => p.Name).IsUnique();
           base.OnModelCreating(modelBuilder);
         }
     }
