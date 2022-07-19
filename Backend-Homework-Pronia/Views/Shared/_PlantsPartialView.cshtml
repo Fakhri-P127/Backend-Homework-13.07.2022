@@ -52,7 +52,7 @@
                 </div>
             </div>
             <div class="product-content">
-                <a class="product-name" href="shop.html">@plant.Name</a>
+                <a class="product-name" asp-controller="plant" asp-action="detail" asp-route-id="@plant.Id">@plant.Name</a>
                 <div class="price-box pb-1">
                     <span class="new-price">$@plant.Price</span>
                 </div>

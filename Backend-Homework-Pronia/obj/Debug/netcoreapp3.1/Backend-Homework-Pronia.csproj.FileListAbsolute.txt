@@ -166,3 +166,6 @@ C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Ba
 C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Areas\ProniaAdmin\Views\Size\Create.cshtml.g.cs
 C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Areas\ProniaAdmin\Views\Color\Detail.cshtml.g.cs
 C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Areas\ProniaAdmin\Views\Size\Detail.cshtml.g.cs
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Areas\ProniaAdmin\Views\Slider\Edit.cshtml.g.cs
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Areas\ProniaAdmin\Views\Plant\Index.cshtml.g.cs
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Areas\ProniaAdmin\Views\Plant\Create.cshtml.g.cs

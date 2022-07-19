@@ -29,7 +29,7 @@
                                         <div class="inner-img">
                                             <div class="scene fill">
                                                 <div class="expand-width" data-depth="0.2">
-                                                    <img src="~/assets/images/website-images//@slider.Image"
+                                                    <img src="~/assets/images/slider//@slider.Image"
                                                          alt="@slider.Title" />
                                                 </div>
                                             </div>
@@ -147,7 +147,9 @@
                              role="tabpanel"
                              aria-labelledby="featured-tab">
                             <div class="product-item-wrap row">
-                                @await Html.PartialAsync("_PlantsPartialView",Model.Plants.Take(8)) 
+                                @*@await Html.PartialAsync("_PlantsPartialView",Model.Plants.Take(8))*@
+                                @await Html.PartialAsync("_PlantsPartialView", Model.Plants)
+
                             </div>
                         </div>
                         <div class="tab-pane fade"

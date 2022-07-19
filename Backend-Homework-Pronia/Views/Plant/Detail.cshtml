@@ -209,7 +209,7 @@
                         <div class="product-category product-tags">
                             <span class="title">Tags :</span>
                             <ul>
-                                @{
+                                @*@{
                                     int lastTagId = Model.Plant.PlantTags.LastOrDefault().Id;
                                  }
                                 @foreach (PlantTag plantTag in Model.Plant.PlantTags)
@@ -217,7 +217,7 @@
                                     <li>
                                         <a href="#">@plantTag.Tag.Name@(plantTag.Id != lastTagId ? "," : "")</a>
                                     </li>
-                                }
+                                }*@
                             </ul>
                         </div>
                         <div class="product-category social-link align-items-center pb-0">

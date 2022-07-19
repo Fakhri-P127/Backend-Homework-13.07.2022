@@ -12,5 +12,7 @@ namespace Backend_Homework_Pronia.Models
         public string AboutReturnRequest { get; set; }
         public string Guarentee { get; set; }
         public List<Plant> Plants { get; set; }
+        public string Definition { get; set; }
+
     }
 }

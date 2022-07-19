@@ -1,0 +1,93 @@
+﻿@model List<Plant>
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="main-panel">
+    <div>
+        <a asp-area="proniaadmin" asp-controller="plant" asp-action="Create" class="btn btn-outline-success">Create new plant</a>
+    </div>
+    <div class="table-responsive pt-3">
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>
+                        Name
+                    </th>
+                    <th>
+                        Price
+                    </th>
+                    <th>Categories</th>
+                    @*<th>Description</th>*@
+                    <th>
+                    SKU
+                    </th>
+                    <th>
+                        Settings
+                    </th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (Plant plant in Model.OrderByDescending(x => x.Id))
+                {
+                    <tr>
+
+                        <td>
+                            <img style="width:150px !important;height:150px;object-fit:contain;" src="~/assets/images/website-images/@plant.PlantImages.FirstOrDefault(p=>p.IsMain==true).Name" alt="@plant.PlantImages.FirstOrDefault(p=>p.IsMain==true).Alternative" />
+                        </td>
+                        <td>@plant.Name</td>
+                        <td>@plant.Price</td>
+                        <td>
+                            @{
+                                int lastCategoryId = plant.PlantCategories.LastOrDefault().Id;
+                            }
+                            @foreach (PlantCategory plantCategory in plant.PlantCategories)
+                            {
+                                @plantCategory.Category.Name@(plantCategory.Id != lastCategoryId ? "," : "")
+                            }
+
+
+                            @*@if (plant.PlantCategories.Count > 3)
+        {
+            @foreach (PlantCategory plantCategory in plant.PlantCategories)
+            {
+                @plantCategory.Category.Name@(plantCategory.Id != lastCategoryId ? "," : "...")
+            }
+        }*@
+                            @*else
+        {*@
+
+                            @*}*@
+
+
+                        </td>
+                        @*<td>@plant.Desc</td>*@
+                        <td>@plant.SKU</td>
+                        <td class="d-flex" style="height:200px !important">
+                            <div class="me-2">
+                                <a asp-area="ProniaAdmin" asp-controller="plant" asp-action="Edit" asp-route-id="@plant.Id" class="btn btn-outline-warning">
+                                    <i class="mdi mdi-border-color"></i>
+                                </a>
+                            </div>
+                            <div class="me-2">
+                                <a asp-area="ProniaAdmin" asp-controller="plant" asp-action="Remove" asp-route-id="@plant.Id" class="btn btn-outline-danger">
+                                    <i class="mdi mdi-delete"></i>
+                                </a>
+                            </div>
+                            <div>
+                                <a asp-area="ProniaAdmin" asp-controller="plant" asp-action="Detail" asp-route-id="@plant.Id" class="btn btn-outline-info">
+                                    <i class="mdi mdi-comment-question-outline"></i>
+                                </a>
+                            </div>
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+
+</div>

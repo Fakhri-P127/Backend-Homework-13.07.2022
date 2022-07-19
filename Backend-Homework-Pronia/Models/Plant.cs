@@ -1,6 +1,8 @@
 ﻿using Backend_Homework_Pronia.Models.Base;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,6 +21,15 @@ namespace Backend_Homework_Pronia.Models
         public List<PlantColor> PlantColors { get; set; }
         public List<PlantSize> PlantSizes { get; set; }
         public List<PlantTag> PlantTags { get; set; }
+        [NotMapped]
+        public IFormFile MainPhoto { get; set; }
+        [NotMapped]
 
+        public IFormFile HoverPhoto { get; set; }
+        [NotMapped]
+
+        public List<IFormFile> DetailPhotos { get; set; }
+        [NotMapped]
+        public List<int> CategoryIds { get; set; }
     }
 }
