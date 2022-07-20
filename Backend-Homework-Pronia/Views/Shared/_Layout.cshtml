@@ -130,9 +130,22 @@
                                                 <li>
                                                     <a class="dropdown-item" href="my-account.html">My account</a>
                                                 </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="login-register.html">Login | Register</a>
-                                                </li>
+                                                @if (User.Identity.IsAuthenticated)
+                                                {
+                                                    <li>
+                                                        <a class="dropdown-item" asp-controller="account" asp-action="login">@User.Identity.Name</a>
+                                                    </li>
+
+                                                }
+                                                else
+                                                {
+                                                    <li>
+                                                        <a class="dropdown-item" asp-controller="account" asp-action="login">Login</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" asp-controller="account" asp-action="register">Register</a>
+                                                    </li>
+                                                }
                                             </ul>
                                         </li>
                                         <li class="d-none d-lg-block">
@@ -245,9 +258,22 @@
                                                         <li>
                                                             <a href="my-account.html">My Account</a>
                                                         </li>
-                                                        <li>
-                                                            <a href="login-register.html">Login | Register</a>
-                                                        </li>
+                                                        @if (User.Identity.IsAuthenticated)
+                                                        {
+                                                            <li>
+                                                                <a class="dropdown-item" asp-controller="account" asp-action="login">@User.Identity.Name</a>
+                                                            </li>
+
+                                                        }
+                                                        else
+                                                        {
+                                                            <li>
+                                                                <a class="dropdown-item" asp-controller="account" asp-action="login">Login</a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="dropdown-item" asp-controller="account" asp-action="register">Register</a>
+                                                            </li>
+                                                        }
                                                         <li>
                                                             <a href="cart.html">Shopping Cart</a>
                                                         </li>
@@ -378,9 +404,22 @@
                                                             <li>
                                                                 <a href="my-account.html">My Account</a>
                                                             </li>
-                                                            <li>
-                                                                <a href="login-register.html">Login | Register</a>
-                                                            </li>
+                                                            @if (User.Identity.IsAuthenticated)
+                                                            {
+                                                                <li>
+                                                                    <a class="dropdown-item" asp-controller="account" asp-action="login">@User.Identity.Name</a>
+                                                                </li>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <li>
+                                                                    <a class="dropdown-item" asp-controller="account" asp-action="login">Login</a>
+                                                                </li>
+                                                                <li>
+                                                                    <a class="dropdown-item" asp-controller="account" asp-action="register">Register</a>
+                                                                </li>
+                                                            }
                                                             <li>
                                                                 <a href="cart.html">Shopping Cart</a>
                                                             </li>
@@ -454,9 +493,22 @@
                                                 <li>
                                                     <a class="dropdown-item" href="my-account.html">My account</a>
                                                 </li>
-                                                <li>
-                                                    <a class="dropdown-item" href="login-register.html">Login | Register</a>
-                                                </li>
+                                                @if (User.Identity.IsAuthenticated)
+                                                {
+                                                    <li>
+                                                        <a class="dropdown-item" asp-controller="account" asp-action="login">@User.Identity.Name</a>
+                                                    </li>
+
+                                                }
+                                                else
+                                                {
+                                                    <li>
+                                                        <a class="dropdown-item" asp-controller="account" asp-action="login">Login</a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" asp-controller="account" asp-action="register">Register</a>
+                                                    </li>
+                                                }
                                             </ul>
                                         </li>
                                         <li class="d-none d-lg-block">
@@ -549,9 +601,22 @@
                                         <li>
                                             <a class="dropdown-item" href="my-account.html">My account</a>
                                         </li>
-                                        <li>
-                                            <a class="dropdown-item" href="login-register.html">Login | Register</a>
-                                        </li>
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            <li>
+                                                <a class="dropdown-item" asp-controller="account" asp-action="login">@User.Identity.Name</a>
+                                            </li>
+
+                                        }
+                                        else
+                                        {
+                                            <li>
+                                                <a class="dropdown-item" asp-controller="account" asp-action="login">Login</a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item" asp-controller="account" asp-action="register">Register</a>
+                                            </li>
+                                        }
                                     </ul>
                                 </li>
                                 <li>
@@ -685,11 +750,22 @@
                                                             <span class="mm-text">My Account</span>
                                                         </a>
                                                     </li>
-                                                    <li>
-                                                        <a href="login-register.html">
-                                                            <span class="mm-text">Login | Register</span>
-                                                        </a>
-                                                    </li>
+                                                    @if (User.Identity.IsAuthenticated)
+                                                    {
+                                                        <li>
+                                                            <a class="dropdown-item" asp-controller="account" asp-action="login">@User.Identity.Name</a>
+                                                        </li>
+                                                        
+                                                    }
+                                                    else
+                                                    {
+                                                        <li>
+                                                            <a class="dropdown-item" asp-controller="account" asp-action="login">Login</a>
+                                                        </li>
+                                                        <li>
+                                                            <a class="dropdown-item" asp-controller="account" asp-action="register">Register</a>
+                                                        </li>
+                                                    }
                                                     <li>
                                                         <a href="cart.html">
                                                             <span class="mm-text">Shopping Cart</span>

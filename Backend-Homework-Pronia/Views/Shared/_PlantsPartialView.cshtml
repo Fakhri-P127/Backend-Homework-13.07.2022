@@ -5,11 +5,11 @@
             <div class="product-img">
                 <a asp-controller="plant" asp-action="detail" asp-route-id="@plant.Id">
                     <img class="primary-img"
-                         src="~/assets/images/website-images//@plant.PlantImages.FirstOrDefault(x=>x.IsMain==true).Name"
-                         alt="@plant.PlantImages.FirstOrDefault(x=>x.IsMain==true).Alternative" />
+                         src="~/assets/images/website-images//@plant.PlantImages.FirstOrDefault(x=>x.IsMain==true)?.Name"
+                         alt="@plant.PlantImages.FirstOrDefault(x=>x.IsMain==true)?.Alternative" />
                     <img class="secondary-img"
-                         src="~/assets/images/website-images//@plant.PlantImages.FirstOrDefault(x=>x.IsMain==null).Name"
-                         alt="@plant.PlantImages.FirstOrDefault(x=>x.IsMain==null).Alternative" />
+                         src="~/assets/images/website-images//@plant.PlantImages.FirstOrDefault(x=>x.IsMain==null)?.Name"
+                         alt="@plant.PlantImages.FirstOrDefault(x=>x.IsMain==null)?.Alternative" />
                 </a>
                 <div class="product-add-action">
                     <ul>

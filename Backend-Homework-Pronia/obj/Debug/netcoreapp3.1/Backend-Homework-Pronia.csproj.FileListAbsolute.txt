@@ -169,3 +169,11 @@ C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Ba
 C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Areas\ProniaAdmin\Views\Slider\Edit.cshtml.g.cs
 C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Areas\ProniaAdmin\Views\Plant\Index.cshtml.g.cs
 C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Areas\ProniaAdmin\Views\Plant\Create.cshtml.g.cs
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Areas\ProniaAdmin\Views\Plant\Edit.cshtml.g.cs
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Core.dll
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Views\Account\Register.cshtml.g.cs
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Views\Account\Login.cshtml.g.cs

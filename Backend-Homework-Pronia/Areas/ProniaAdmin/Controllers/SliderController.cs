@@ -39,8 +39,6 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
         [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Create(Slider slider)
         {
-            
-
             if (!ModelState.IsValid) return View();
 
             if (!slider.Photo.IsImageOkay(3))

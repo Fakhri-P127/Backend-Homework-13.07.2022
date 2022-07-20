@@ -65,14 +65,29 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
             }
 
             TempData["FileName"] = "";
-            foreach (IFormFile photo in plant.DetailPhotos)
+            List<PlantImage> DetailImages = new List<PlantImage>();
+
+            foreach (IFormFile photo in plant.DetailPhotos.ToList())
             {
                 if (!photo.IsImageOkay(2))
                 {
                     plant.DetailPhotos.Remove(photo);
                     TempData["FileName"] += photo.FileName + ",";
+                    continue;
                 }
+                PlantImage photoImage = new PlantImage
+                {
+                    Name = await photo.FileCreate(_env.WebRootPath, "assets/images/website-images"),
+                    IsMain = false,
+                    Alternative = plant.Name,
+                    Plant = plant,
+                    
+                    
+                };
+                DetailImages.Add(photoImage);
+
             }
+            // if all the photos are removed
             if (plant.DetailPhotos.Count == 0)
             {
                 ViewBag.Information = _context.PlantInformations.ToList();
@@ -86,7 +101,8 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
                 Name = await plant.MainPhoto.FileCreate(_env.WebRootPath, "assets/images/website-images"),
                 IsMain=true,
                 Alternative=plant.Name,
-                Plant=plant
+                Plant=plant,
+                
             };
             PlantImage hover = new PlantImage
             {
@@ -96,20 +112,6 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
                 Plant = plant
             };
 
-            List<PlantImage> DetailImages = new List<PlantImage>();
-
-            foreach (IFormFile detailPhoto in plant.DetailPhotos)
-            {
-                PlantImage photo = new PlantImage
-                {
-                    Name = await detailPhoto.FileCreate(_env.WebRootPath, "assets/images/website-images"),
-                    IsMain = false,
-                    Alternative = plant.Name,
-                    Plant = plant
-                    
-                };
-                DetailImages.Add(photo);
-            }
             await _context.PlantImages.AddAsync(main);
             await _context.PlantImages.AddAsync(hover);
             await _context.PlantImages.AddRangeAsync(DetailImages);
@@ -127,9 +129,65 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
             }
 
             await _context.PlantCategories.AddRangeAsync(pcategories);
-
             await _context.SaveChangesAsync();
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Edit(int? id)
+        {
+            if (id is null || id == 0) return NotFound();
+
+            Plant existed = _context.Plants.Include(p => p.PlantInformation)
+                .Include(p => p.PlantCategories).ThenInclude(p => p.Category)
+                .Include(p => p.PlantImages).FirstOrDefault(p=>p.Id==id); 
+
+            if (existed is null) return NotFound();
+
+            ViewBag.Information = _context.PlantInformations.ToList();
+            ViewBag.Categories = _context.Categories.ToList();
+            
+            return View(existed);
+        }
+        
+        [HttpPost]
+        [AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> Edit(int? id, Plant newPlant)
+        {
+            if (!ModelState.IsValid) 
+            {
+                ViewBag.Information = _context.PlantInformations.ToList();
+                ViewBag.Categories = _context.Categories.ToList();
+                ModelState.AddModelError(string.Empty, "Couldn't load any ");
+                return View();
+            };
+
+            Plant currPlant = await _context.Plants.Include(p => p.PlantInformation)
+                .Include(p => p.PlantCategories).ThenInclude(p => p.Category)
+                .Include(p => p.PlantImages).FirstOrDefaultAsync(p => p.Id == id);
+
+            if (currPlant is null) return NotFound();
+
+            //_context.Entry(currPlant).CurrentValues.SetValues(newPlant);
+
+
+
+            //foreach (var item in currPlant.PlantImages.Where(p=>p.IsMain==false).ToList())
+            //{
+            //    currPlant.PlantImages.RemoveAll(p => p.Name == newPlant.Name);
+            //    //FileValidator.FileDelete(_env.WebRootPath, "assets/images/website-images", item.Name);
+
+            //    //item.Name = await newPlant.DetailPhotos.FirstOrDefault().FileCreate(_env.WebRootPath, "assets/images/website-images");
+
+            //    //foreach (var image in currPlant.DetailPhotos)
+            //    //{
+
+            //    //    FileValidator.FileDelete(_env.WebRootPath, "assets/images/website-images", item.Name);
+            //    //    item.Name = await image.FileCreate(_env.WebRootPath, "assets/images/website-images");
+            //    //}
+            //}
+
+            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
 

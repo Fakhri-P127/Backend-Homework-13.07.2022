@@ -7,6 +7,13 @@
     <div>
         <a asp-area="proniaadmin" asp-controller="plant" asp-action="Create" class="btn btn-outline-success">Create new plant</a>
     </div>
+    @if ((string)TempData["FileName"] != "")
+    {
+        <div class="alert alert-danger">
+            @TempData["FileName"] couldn't upload 
+        </div>
+    }
+
     <div class="table-responsive pt-3">
         <table class="table table-dark">
             <thead>
@@ -21,7 +28,7 @@
                     <th>Categories</th>
                     @*<th>Description</th>*@
                     <th>
-                    SKU
+                        SKU
                     </th>
                     <th>
                         Settings
@@ -35,7 +42,7 @@
                     <tr>
 
                         <td>
-                            <img style="width:150px !important;height:150px;object-fit:contain;" src="~/assets/images/website-images/@plant.PlantImages.FirstOrDefault(p=>p.IsMain==true).Name" alt="@plant.PlantImages.FirstOrDefault(p=>p.IsMain==true).Alternative" />
+                            <img style="width:150px !important;height:150px;object-fit:contain;" src="~/assets/images/website-images/@plant.PlantImages.FirstOrDefault(p=>p.IsMain==true)?.Name" alt="@plant.PlantImages.FirstOrDefault(p=>p.IsMain==true)?.Alternative" />
                         </td>
                         <td>@plant.Name</td>
                         <td>@plant.Price</td>
@@ -50,14 +57,14 @@
 
 
                             @*@if (plant.PlantCategories.Count > 3)
-        {
-            @foreach (PlantCategory plantCategory in plant.PlantCategories)
-            {
-                @plantCategory.Category.Name@(plantCategory.Id != lastCategoryId ? "," : "...")
-            }
-        }*@
+                                {
+                                    @foreach (PlantCategory plantCategory in plant.PlantCategories)
+                                    {
+                                        @plantCategory.Category.Name@(plantCategory.Id != lastCategoryId ? "," : "...")
+                                    }
+                                }*@
                             @*else
-        {*@
+                                {*@
 
                             @*}*@
 
