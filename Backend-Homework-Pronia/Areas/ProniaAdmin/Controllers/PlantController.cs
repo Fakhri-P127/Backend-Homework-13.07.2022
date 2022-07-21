@@ -154,20 +154,50 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
         [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Edit(int? id, Plant newPlant)
         {
-            if (!ModelState.IsValid) 
-            {
-                ViewBag.Information = _context.PlantInformations.ToList();
-                ViewBag.Categories = _context.Categories.ToList();
-                ModelState.AddModelError(string.Empty, "Couldn't load any ");
-                return View();
-            };
-
+           
             Plant currPlant = await _context.Plants.Include(p => p.PlantInformation)
                 .Include(p => p.PlantCategories).ThenInclude(p => p.Category)
                 .Include(p => p.PlantImages).FirstOrDefaultAsync(p => p.Id == id);
 
             if (currPlant is null) return NotFound();
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Information = _context.PlantInformations.ToList();
+                ViewBag.Categories = _context.Categories.ToList();
+                ModelState.AddModelError(string.Empty, "Couldn't load any ");
+                return View(currPlant);
+            };
 
+            List<int> ImageIds = new List<int>();
+            foreach (var item in currPlant.PlantImages.Where(p=>p.IsMain==false))
+            {
+                int sa = item.Id;
+                ImageIds.Add(sa);
+                
+            }
+           
+            //if (4 != ImageIds.Count)
+            //{
+            //    ViewBag.Information = _context.PlantInformations.ToList();
+            //    ViewBag.Categories = _context.Categories.ToList();
+            //    ModelState.AddModelError("", "Bruh finally");
+            //    return View(currPlant);
+            //}
+            List<PlantImage> plantImages = new List<PlantImage>();
+            foreach (int imageId in ImageIds)
+            {
+
+                if (currPlant.PlantImages.Where(p => p.IsMain == false).Any(p => p.Id == imageId))
+                {
+                    plantImages.Add(currPlant.PlantImages
+                        .Where(p => p.IsMain == false).FirstOrDefault(p => p.Id != imageId));
+                    //currPlant.PlantImages
+                    //    .Remove(currPlant.PlantImages
+                    //    .Where(p => p.IsMain == false).FirstOrDefault(p => p.Id != imageId));
+                }
+            }
+            //return Json(plantImages.Count);
+            //newPlant.PlantImages.Where(p => p.ImageId !=)
             //_context.Entry(currPlant).CurrentValues.SetValues(newPlant);
 
 
@@ -187,7 +217,35 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
             //    //}
             //}
 
+           
+            List<int> newCategories = new List<int>();
+            foreach (var item in currPlant.PlantCategories)
+            {
+                foreach (var np in newPlant.CategoryIds)
+                {
+                    if (np == item.CategoryId)
+                    {
+                        newCategories.Add(np);
+                    }
+                }
+            }
+            currPlant.PlantCategories.Clear();
+
+            List<PlantCategory> pcategories = new List<PlantCategory>();
+            foreach (var pcategoryId in newPlant.CategoryIds)
+            {
+                PlantCategory pcategory = new PlantCategory
+                {
+                    CategoryId = pcategoryId,
+                    Plant = currPlant,
+                };
+             
+                pcategories.Add(pcategory);
+            }
+
+            await _context.PlantCategories.AddRangeAsync(pcategories);
             _context.SaveChanges();
+            //return Json(ImageIds);
             return RedirectToAction(nameof(Index));
         }
 

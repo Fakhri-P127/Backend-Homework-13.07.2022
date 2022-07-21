@@ -11,11 +11,11 @@
 
         <div class="image my-4">
             <h3>Main image</h3>
-            <img width="300" src="~/assets/images/website-images/@Model.PlantImages.FirstOrDefault(p => p.IsMain == true)?.Name" alt="main" />
+            <img width="300" src="~/assets/images/website-images/@Model.PlantImages?.FirstOrDefault(p => p.IsMain == true)?.Name" alt="main" />
         </div>
         <div class="image my-4">
             <h3>Hover image</h3>
-            <img width="300" src="~/assets/images/website-images/@Model.PlantImages.FirstOrDefault(p => p.IsMain == null)?.Name" alt="null" />
+            <img width="300" src="~/assets/images/website-images/@Model.PlantImages?.FirstOrDefault(p => p.IsMain == null)?.Name" alt="null" />
         </div>
         <div id="detailContent" class="d-flex">
 
@@ -38,12 +38,12 @@
     <form class="mt-3" method="post" enctype="multipart/form-data">
         <div class="alert alert-danger" asp-validation-summary="ModelOnly"></div>
 
-        @foreach (var pImage in Model.PlantImages.Where(p => p.IsMain == false))
+        @foreach (var pImage in Model.PlantImages?.Where(p => p.IsMain == false))
         {
             <div class="@pImage.Id">
                 <label>Image Id data:</label><br />
-                <input asp-for="@pImage.Name" class="form-control" /><br />
-                <span class="text-danger" asp-validation-for="@pImage.Name"></span>
+                <input asp-for="@pImage.ImageId" value="@pImage.Id" class="form-control" /><br />
+                <span class="text-danger" asp-validation-for="@pImage.ImageId"></span>
             </div>
         }
         <div>
