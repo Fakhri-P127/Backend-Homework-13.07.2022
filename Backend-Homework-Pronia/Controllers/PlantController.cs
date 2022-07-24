@@ -30,10 +30,10 @@ namespace Backend_Homework_Pronia.Controllers
             {
                 Plant = await _context.Plants.Include(p => p.PlantImages)
                 .Include(p => p.PlantInformation).Include(p => p.PlantColors)
-                .Include(p => p.PlantSizes).Include(p => p.PlantCategories)
+                .Include(p => p.PlantCategories)
                 .ThenInclude(p => p.Category).Include(p => p.PlantColors).ThenInclude(p => p.Color)
-                .Include(p => p.PlantSizes).ThenInclude(p => p.Size).
-                Include(p => p.PlantTags).ThenInclude(p => p.Tag)
+                .ThenInclude(p=>p.ColorSizes).ThenInclude(p=>p.Size)
+                .Include(p => p.PlantTags).ThenInclude(p => p.Tag)
                 .FirstOrDefaultAsync(p => p.Id == id),
                 Plants= new List<Plant>()
             };
@@ -77,7 +77,8 @@ namespace Backend_Homework_Pronia.Controllers
                 AppUser user = await _userManager.FindByNameAsync(User.Identity.Name);
 
                 if (user is null) return NotFound();
-                user.BasketItems = await _context.BasketItems.Include(b=>b.Plant).Include(b=>b.AppUser).Where(b => b.AppUserId == user.Id).ToListAsync();
+                user.BasketItems = await _context.BasketItems
+                    .Include(b=>b.Plant).Include(b=>b.AppUser).Where(b => b.AppUserId == user.Id).ToListAsync();
 
                 BasketItem existed = await _context.BasketItems.FirstOrDefaultAsync(b => b.PlantId == plant.Id && user.Id == b.AppUserId);
                 if(existed is null)

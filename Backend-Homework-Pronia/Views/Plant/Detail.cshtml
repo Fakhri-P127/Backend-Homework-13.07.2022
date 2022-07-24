@@ -112,10 +112,17 @@
                         <div class="selector-wrap size-option">
                             <span class="selector-title">Size</span>
                             <select class="nice-select wide rounded-0">
-                                @foreach (PlantSize plantSize in Model.Plant.PlantSizes)
+                                @*@foreach (PlantSize plantSize in Model.Plant.PlantSizes)
                                 {
                                     <option value="@plantSize.Size.Name">@plantSize.Size.Name</option>
 
+                                }*@
+                                @foreach (var item in Model.Plant.PlantColors)
+                                {
+                                    foreach (var size in item.Color.ColorSizes)
+                                    {
+                                        <option value="@size.SizeId">@size.Size.Name</option>
+                                    }
                                 }
                             </select>
                         </div>

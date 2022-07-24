@@ -19,7 +19,7 @@ namespace Backend_Homework_Pronia.Models
         public PlantInformation PlantInformation { get; set; }
         public List<PlantCategory> PlantCategories { get; set; }
         public List<PlantColor> PlantColors { get; set; }
-        public List<PlantSize> PlantSizes { get; set; }
+        //public List<PlantSize> PlantSizes { get; set; }
         public List<PlantTag> PlantTags { get; set; }
         [NotMapped]
         public IFormFile MainPhoto { get; set; }

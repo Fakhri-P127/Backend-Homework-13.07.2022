@@ -12,9 +12,10 @@ namespace Backend_Homework_Pronia.Models
         [Required, StringLength(maximumLength: 35)]
 
         public string Name { get; set; }
-        public List<PlantSize> PlantSizes { get; set; }
+        //public List<PlantSize> PlantSizes { get; set; }
         //public int ColorId { get; set; }
         //public Color Color { get; set; }
+        public List<ColorSize> ColorSizes { get; set; }
 
 
     }

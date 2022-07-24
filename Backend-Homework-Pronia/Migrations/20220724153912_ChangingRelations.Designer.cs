@@ -4,14 +4,16 @@ using Backend_Homework_Pronia.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Backend_Homework_Pronia.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220724153912_ChangingRelations")]
+    partial class ChangingRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,28 +160,6 @@ namespace Backend_Homework_Pronia.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Colors");
-                });
-
-            modelBuilder.Entity("Backend_Homework_Pronia.Models.ColorSize", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ColorId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SizeId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ColorId");
-
-                    b.HasIndex("SizeId");
-
-                    b.ToTable("ColorSizes");
                 });
 
             modelBuilder.Entity("Backend_Homework_Pronia.Models.Order", b =>
@@ -589,21 +569,6 @@ namespace Backend_Homework_Pronia.Migrations
                     b.HasOne("Backend_Homework_Pronia.Models.Plant", "Plant")
                         .WithMany()
                         .HasForeignKey("PlantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Backend_Homework_Pronia.Models.ColorSize", b =>
-                {
-                    b.HasOne("Backend_Homework_Pronia.Models.Color", "Color")
-                        .WithMany("ColorSizes")
-                        .HasForeignKey("ColorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Backend_Homework_Pronia.Models.Size", "Size")
-                        .WithMany("ColorSizes")
-                        .HasForeignKey("SizeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

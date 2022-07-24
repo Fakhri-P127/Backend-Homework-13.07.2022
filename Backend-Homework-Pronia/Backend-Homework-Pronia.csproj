@@ -22,6 +22,10 @@
     <Compile Remove="Migrations\20220723094753_AddedRelationsWithAppUser.Designer.cs" />
     <Compile Remove="Migrations\20220724150106_Updated.cs" />
     <Compile Remove="Migrations\20220724150106_Updated.Designer.cs" />
+    <Compile Remove="Migrations\20220724153336_UpdatedRelationsWithColorAndSizeTables.cs" />
+    <Compile Remove="Migrations\20220724153336_UpdatedRelationsWithColorAndSizeTables.Designer.cs" />
+    <Compile Remove="Migrations\20220724154122_ChangingRelationsForColorAndSize.cs" />
+    <Compile Remove="Migrations\20220724154122_ChangingRelationsForColorAndSize.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

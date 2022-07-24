@@ -19,34 +19,34 @@ namespace Backend_Homework_Pronia.Extensions
             string filename = string.Empty;
             //Bele ishleyir amma baglamamin sebebi eyni papkadan image goturende gedib override edir ve silende o shekil hemishelik gedir.
 
-            //if (sliders != null)
-            //{
-            //    bool isSame = sliders.Any(s =>s.Image == file.FileName);
-            //    if (isSame)
-            //    {
-            //        filename = string.Concat(Guid.NewGuid(), file.FileName);
-            //    }
-            //    else
-            //    {
-            //        filename = file.FileName;
-            //    }
+            if (sliders != null)
+            {
+                bool isSame = sliders.Any(s => s.Image == file.FileName);
+                if (isSame)
+                {
+                    filename = string.Concat(Guid.NewGuid(), file.FileName);
+                }
+                else
+                {
+                    filename = file.FileName;
+                }
 
-            //}
+            }
 
-            //if (pImages != null)
-            //{
+            if (pImages != null)
+            {
 
-            //    bool isSame = pImages.Any(p => p.Name == file.FileName);
-            //    if (isSame)
-            //    {
-            //        filename = string.Concat(Guid.NewGuid(), file.FileName);
-            //    }
-            //    else
-            //    {
-            //        filename = file.FileName;
-            //    }
-            //}
-            filename = string.Concat(Guid.NewGuid(), file.FileName);
+                bool isSame = pImages.Any(p => p.Name == file.FileName);
+                if (isSame)
+                {
+                    filename = string.Concat(Guid.NewGuid(), file.FileName);
+                }
+                else
+                {
+                    filename = file.FileName;
+                }
+            }
+            //filename = string.Concat(Guid.NewGuid(), file.FileName);
 
             string path = Path.Combine(root, folder);
             string filePath = Path.Combine(path, filename);

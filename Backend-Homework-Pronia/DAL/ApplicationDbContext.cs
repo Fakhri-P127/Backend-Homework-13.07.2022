@@ -24,7 +24,8 @@ namespace Backend_Homework_Pronia.DAL
         public DbSet<Color> Colors { get; set; }
         public DbSet<PlantColor> PlantColors { get; set; }
         public DbSet<Size> Sizes { get; set; }
-        public DbSet<PlantSize> PlantSizes { get; set; }
+        //public DbSet<PlantSize> PlantSizes { get; set; }
+        public DbSet<ColorSize> ColorSizes { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<PlantTag> PlantTags { get; set; }
         public DbSet<Setting> Settings { get; set; }
