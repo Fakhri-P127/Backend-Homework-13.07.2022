@@ -177,3 +177,7 @@ C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Ba
 C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Identity.Stores.dll
 C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Views\Account\Register.cshtml.g.cs
 C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Views\Account\Login.cshtml.g.cs
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Mvc.NewtonsoftJson.dll
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\bin\Debug\netcoreapp3.1\Newtonsoft.Json.Bson.dll
+C:\Users\efend\source\repos\Backend\Backend-Homeworks\Backend-Homework-Pronia\Backend-Homework-Pronia\obj\Debug\netcoreapp3.1\Razor\Views\Order\Checkout.cshtml.g.cs

@@ -1,6 +1,7 @@
 ﻿using Backend_Homework_Pronia.DAL;
 using Backend_Homework_Pronia.Extensions;
 using Backend_Homework_Pronia.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
 {
     [Area("ProniaAdmin")]
+    [Authorize]
     public class PlantController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -28,7 +30,7 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
             List<Plant> model = _context.Plants.Include(p => p.PlantInformation)
                 .Include(p => p.PlantCategories).ThenInclude(p => p.Category)
                 .Include(p => p.PlantImages).ToList();
-
+           
             return View(model);
         }
         
@@ -48,23 +50,20 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
                 ViewBag.Categories = _context.Categories.ToList();
                 return View();
             }
-            if (plant.MainPhoto is null || plant.HoverPhoto is null || plant.DetailPhotos is null)
+            if (plant.MainPhoto is null || plant.HoverPhoto is null
+                || plant.DetailPhotos is null)
             {
-                ViewBag.Information = _context.PlantInformations.ToList();
-                ViewBag.Categories = _context.Categories.ToList();
-                ModelState.AddModelError(string.Empty, "Choose at least 1 main image, 1 hover image and 1 detail image");
-                return View();
+                return ErrorMessage(
+                    "Choose at least 1 main image, 1 hover image and 1 detail image");
             }
 
             if (!plant.MainPhoto.IsImageOkay(2) || !plant.HoverPhoto.IsImageOkay(2))
             {
-                ViewBag.Information = _context.PlantInformations.ToList();
-                ViewBag.Categories = _context.Categories.ToList();
-                ModelState.AddModelError(string.Empty, "Please choose valid image file");
-                return View();
+                return ErrorMessage("Please choose valid image file");
+             
             }
 
-            TempData["FileName"] = "";
+            TempData["FileName"] = default(string);
             List<PlantImage> DetailImages = new List<PlantImage>();
 
             foreach (IFormFile photo in plant.DetailPhotos.ToList())
@@ -77,12 +76,11 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
                 }
                 PlantImage photoImage = new PlantImage
                 {
-                    Name = await photo.FileCreate(_env.WebRootPath, "assets/images/website-images"),
+                    Name = await photo.FileCreate(_env.WebRootPath,
+                    "assets/images/website-images", null, _context.PlantImages),
                     IsMain = false,
                     Alternative = plant.Name,
                     Plant = plant,
-                    
-                    
                 };
                 DetailImages.Add(photoImage);
 
@@ -90,23 +88,21 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
             // if all the photos are removed
             if (plant.DetailPhotos.Count == 0)
             {
-                ViewBag.Information = _context.PlantInformations.ToList();
-                ViewBag.Categories = _context.Categories.ToList();
-                ModelState.AddModelError(string.Empty, "Couldn't load any of the detail images");
-                return View();
+                return ErrorMessage("Couldn't load any of the detail images");
             }
 
             PlantImage main = new PlantImage
             {
-                Name = await plant.MainPhoto.FileCreate(_env.WebRootPath, "assets/images/website-images"),
-                IsMain=true,
+                Name = await plant.MainPhoto.FileCreate(_env.WebRootPath,
+                "assets/images/website-images", null, _context.PlantImages),
+                IsMain =true,
                 Alternative=plant.Name,
                 Plant=plant,
-                
             };
             PlantImage hover = new PlantImage
             {
-                Name = await plant.HoverPhoto.FileCreate(_env.WebRootPath, "assets/images/website-images"),
+                Name = await plant.HoverPhoto.FileCreate(_env.WebRootPath,
+                "assets/images/website-images", null, _context.PlantImages),
                 IsMain = null,
                 Alternative = plant.Name,
                 Plant = plant
@@ -134,6 +130,7 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = "Admin,Moderator")]
         public IActionResult Edit(int? id)
         {
             if (id is null || id == 0) return NotFound();
@@ -149,106 +146,201 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
             
             return View(existed);
         }
-        
+
         [HttpPost]
         [AutoValidateAntiforgeryToken]
         public async Task<IActionResult> Edit(int? id, Plant newPlant)
         {
-           
-            Plant currPlant = await _context.Plants.Include(p => p.PlantInformation)
-                .Include(p => p.PlantCategories).ThenInclude(p => p.Category)
-                .Include(p => p.PlantImages).FirstOrDefaultAsync(p => p.Id == id);
 
+            Plant currPlant = await _context.Plants
+                .Include(p => p.PlantImages)
+                .Include(p => p.PlantInformation)
+                .Include(p => p.PlantCategories)
+                .ThenInclude(p => p.Category).SingleOrDefaultAsync(p => p.Id == id);
+           
             if (currPlant is null) return NotFound();
+
             if (!ModelState.IsValid)
             {
-                ViewBag.Information = _context.PlantInformations.ToList();
-                ViewBag.Categories = _context.Categories.ToList();
-                ModelState.AddModelError(string.Empty, "Couldn't load any ");
-                return View(currPlant);
+                return ErrorMessage("Couldn't load any",currPlant);
             };
 
-            List<int> ImageIds = new List<int>();
-            foreach (var item in currPlant.PlantImages.Where(p=>p.IsMain==false))
+            if (newPlant.ImageIds is null && newPlant.DetailPhotos is null)
             {
-                int sa = item.Id;
-                ImageIds.Add(sa);
-                
+                return ErrorMessage("You must upload at least 1 detail image",currPlant);
             }
-           
-            //if (4 != ImageIds.Count)
-            //{
-            //    ViewBag.Information = _context.PlantInformations.ToList();
-            //    ViewBag.Categories = _context.Categories.ToList();
-            //    ModelState.AddModelError("", "Bruh finally");
-            //    return View(currPlant);
-            //}
-            List<PlantImage> plantImages = new List<PlantImage>();
-            foreach (int imageId in ImageIds)
+            if (newPlant.CategoryIds is null)
             {
-
-                if (currPlant.PlantImages.Where(p => p.IsMain == false).Any(p => p.Id == imageId))
-                {
-                    plantImages.Add(currPlant.PlantImages
-                        .Where(p => p.IsMain == false).FirstOrDefault(p => p.Id != imageId));
-                    //currPlant.PlantImages
-                    //    .Remove(currPlant.PlantImages
-                    //    .Where(p => p.IsMain == false).FirstOrDefault(p => p.Id != imageId));
-                }
+                return ErrorMessage("You must choose at least 1 category",currPlant);
             }
-            //return Json(plantImages.Count);
-            //newPlant.PlantImages.Where(p => p.ImageId !=)
-            //_context.Entry(currPlant).CurrentValues.SetValues(newPlant);
 
+            _context.Entry(currPlant).CurrentValues.SetValues(newPlant);
 
+            //if the user inputs detail photos
+            TempData["FileName"] = default(string);
 
-            //foreach (var item in currPlant.PlantImages.Where(p=>p.IsMain==false).ToList())
-            //{
-            //    currPlant.PlantImages.RemoveAll(p => p.Name == newPlant.Name);
-            //    //FileValidator.FileDelete(_env.WebRootPath, "assets/images/website-images", item.Name);
-
-            //    //item.Name = await newPlant.DetailPhotos.FirstOrDefault().FileCreate(_env.WebRootPath, "assets/images/website-images");
-
-            //    //foreach (var image in currPlant.DetailPhotos)
-            //    //{
-
-            //    //    FileValidator.FileDelete(_env.WebRootPath, "assets/images/website-images", item.Name);
-            //    //    item.Name = await image.FileCreate(_env.WebRootPath, "assets/images/website-images");
-            //    //}
-            //}
-
-           
-            List<int> newCategories = new List<int>();
-            foreach (var item in currPlant.PlantCategories)
+            if (newPlant.DetailPhotos != null)
             {
-                foreach (var np in newPlant.CategoryIds)
+                // butun detail shekillerini silib bashqalarini elave etmek uchundu
+                if (newPlant.ImageIds is null)
                 {
-                    if (np == item.CategoryId)
+                    foreach (PlantImage dtlImage in currPlant.PlantImages
+                        .Where(p => p.IsMain == false))
                     {
-                        newCategories.Add(np);
+                        FileValidator.FileDelete(_env.WebRootPath,
+                            "assets/images/website-images", dtlImage.Name);
                     }
+                    currPlant.PlantImages.RemoveAll(p => p.IsMain == false);
+                }
+                else
+                {
+                    List<PlantImage> removableImages = currPlant.PlantImages
+                  .Where(p => p.IsMain == false && !newPlant.ImageIds
+                  .Contains(p.Id)).ToList();
+
+                    currPlant.PlantImages
+                        .RemoveAll(p => removableImages.Any(r => p.Id == r.Id));
+
+                    removableImages.ForEach(r => FileValidator.FileDelete(_env.WebRootPath,
+                        "assets/images/website-images", r.Name));
+
+                }
+
+                foreach (IFormFile image in newPlant.DetailPhotos.ToList())
+                {
+                    //butun upload olunmush shekiller shertlerimize uymursa
+                    if (newPlant.DetailPhotos.Count == 0)
+                    {
+                        return ErrorMessage(
+                            "None of the detail images are valid type",currPlant);
+                    }
+                    // burda yuklediyimiz bir neche shekilden her hansisa problemli olsa silsin deyirik. Bir iki shekile gore butun shekiller silinmesin
+                    if (!image.IsImageOkay(2))
+                    {
+                        newPlant.DetailPhotos.Remove(image);
+                        TempData["FileName"] += image.FileName + ",";
+                        continue;
+                    }
+
+                    PlantImage detailImage = new PlantImage
+                    {
+                        Name = await image.FileCreate(_env.WebRootPath,
+                        "assets/images/website-images", null, _context.PlantImages),
+                        IsMain = false,
+                        Plant = currPlant,
+                        Alternative = newPlant.Name,
+                    };
+                    await _context.PlantImages.AddAsync(detailImage);
                 }
             }
-            currPlant.PlantCategories.Clear();
 
-            List<PlantCategory> pcategories = new List<PlantCategory>();
-            foreach (var pcategoryId in newPlant.CategoryIds)
+            //if the user inputs main photo
+            if (newPlant.MainPhoto != null)
             {
-                PlantCategory pcategory = new PlantCategory
+                if (!newPlant.MainPhoto.IsImageOkay(2))
                 {
-                    CategoryId = pcategoryId,
+                    return ErrorMessage("Please choose valid image file",currPlant);
+                }
+                PlantImage main = new PlantImage
+                {
+                    IsMain = true,
+                    Alternative = newPlant.Name,
+                    Name = await newPlant.MainPhoto
+                    .FileCreate(_env.WebRootPath,
+                    "assets/images/website-images", null, _context.PlantImages),
                     Plant = currPlant,
                 };
-             
-                pcategories.Add(pcategory);
+                string mainPhoto = currPlant.PlantImages
+                    .FirstOrDefault(p => p.IsMain == true).Name;
+                FileValidator.FileDelete(_env.WebRootPath, 
+                    "assets/images/website-images", mainPhoto);
+                //name ve alternative i yaratdigimiza menimsedirik ki yeni photo ile override edek
+                currPlant.PlantImages.FirstOrDefault(p => p.IsMain == true).Name = main.Name;
+                currPlant.PlantImages.FirstOrDefault(p => p.IsMain == true)
+                    .Alternative = main.Alternative;
             }
 
-            await _context.PlantCategories.AddRangeAsync(pcategories);
+            //if the user inputs hover photo
+            if (newPlant.HoverPhoto != null)
+            {
+                if (!newPlant.HoverPhoto.IsImageOkay(2))
+                {
+                   return ErrorMessage("Please choose valid image file",currPlant);
+                }
+                PlantImage hover = new PlantImage
+                {
+                    IsMain = null,
+                    Alternative = newPlant.Name,
+                    Name = await newPlant.HoverPhoto.FileCreate(_env.WebRootPath,
+                    "assets/images/website-images", null, _context.PlantImages),
+                    Plant = currPlant
+                };
+                string filename = currPlant.PlantImages
+                    .FirstOrDefault(p => p.IsMain == null).Name;
+                //kohne shekili silirik
+                FileValidator.FileDelete(_env.WebRootPath,
+                    "assets/images/website-images", filename);
+                //name ve alternative i yaratdigimiza menimsedirik ki yeni photo ile override edek
+                currPlant.PlantImages
+                    .FirstOrDefault(p => p.IsMain == null).Name = hover.Name;
+                currPlant.PlantImages
+                    .FirstOrDefault(p => p.IsMain == null).Alternative = hover.Alternative;
+            }
+
+            // Editing Category starts
+            //removing categories that doesn't match with CategoryIds
+            List<PlantCategory> removableCategories = currPlant.PlantCategories
+                .Where(p => !newPlant.CategoryIds.Contains(p.CategoryId)).ToList();
+
+            currPlant.PlantCategories.RemoveAll(c => removableCategories
+            .Any(r => r.CategoryId == c.CategoryId));
+
+            //adding categories that don't contain CategoryIds
+            newPlant.CategoryIds.ForEach(async ctgId =>
+            {
+                PlantCategory currCategory = currPlant.PlantCategories
+                .FirstOrDefault(p => p.CategoryId == ctgId);
+
+                if (!currPlant.PlantCategories.Contains(currCategory))
+                {
+                    PlantCategory category = new PlantCategory
+                    {
+                        CategoryId = ctgId,
+                        Plant = currPlant
+                    };
+                    await _context.PlantCategories.AddAsync(category);
+                }
+            });
+            // Editing Category ends
+
             _context.SaveChanges();
-            //return Json(ImageIds);
             return RedirectToAction(nameof(Index));
         }
 
-       
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Remove(int? id)
+        {
+            if (id is null || id == 0) return NotFound();
+
+            Plant currPlant = await _context.Plants.Include(p=>p.PlantImages).FirstOrDefaultAsync(p => p.Id == id);
+            currPlant.PlantImages.ForEach(pImage => FileValidator.FileDelete(_env.WebRootPath,
+                "assets/images/website-images", pImage.Name));
+            
+            _context.Plants.Remove(currPlant);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
+
+        // Utility methods
+        public IActionResult ErrorMessage(string text, Plant currPlant=null)
+        {
+            ViewBag.Information = _context.PlantInformations.ToList();
+            ViewBag.Categories = _context.Categories.ToList();
+            ModelState.AddModelError(string.Empty, text);
+            return View(currPlant);
+        }
     }
 }

@@ -1,7 +1,12 @@
-﻿using Backend_Homework_Pronia.Models;
+﻿using Backend_Homework_Pronia.DAL;
+using Backend_Homework_Pronia.Models;
+using Backend_Homework_Pronia.Service;
 using Backend_Homework_Pronia.ViewModels;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +18,18 @@ namespace Backend_Homework_Pronia.Controllers
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleInManager;
+        private readonly ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _http;
 
-        public AccountController(UserManager<AppUser> userManager,SignInManager<AppUser> signInManager)
+        public AccountController(UserManager<AppUser> userManager,SignInManager<AppUser> signInManager,
+            RoleManager<IdentityRole> roleInManager,ApplicationDbContext context, IHttpContextAccessor http)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleInManager = roleInManager;
+            _context = context;
+            _http = http;
         }
         public IActionResult Register()
         {
@@ -51,15 +63,11 @@ namespace Backend_Homework_Pronia.Controllers
                     ModelState.AddModelError("", error.Description);
                 }
                 return View();
-
             }
-           
+            await _userManager.AddToRoleAsync(user, "Member");
             return RedirectToAction("Index","Home");
         }
-        public JsonResult ShowAuthentication()
-        {
-            return Json(User.Identity.IsAuthenticated);
-        }
+       
         public IActionResult Login()
         {
             return View();
@@ -72,6 +80,9 @@ namespace Backend_Homework_Pronia.Controllers
 
             AppUser user = await _userManager.FindByNameAsync(login.Username);
             if (user is null) return View();
+            user.BasketItems = await _context.BasketItems
+                .Include(b => b.Plant).Include(b => b.AppUser)
+                .Where(b => b.AppUserId == user.Id).ToListAsync();
 
             Microsoft.AspNetCore.Identity.SignInResult result = await _signInManager.PasswordSignInAsync(user,login.Password,login.RememberMe,true);
 
@@ -85,13 +96,59 @@ namespace Backend_Homework_Pronia.Controllers
                 ModelState.AddModelError("", "Username or password incorrect.");
                 return View();
             }
-           
-            return RedirectToAction("Index","Home");
+
+            string basketStr = HttpContext.Request.Cookies["Basket"];
+            BasketVM basket;
+            if (!string.IsNullOrEmpty(basketStr))
+            {
+                basket = JsonConvert.DeserializeObject<BasketVM>(basketStr);
+                foreach (var item in basket.BasketCookieItemVMs)
+                {
+                    // Eger eyni mehsuldan userBasket de varsa onda quantitysini artir, birde mehsulu yeniden yaratma.
+                    if (user.BasketItems.Any(b => b.PlantId == item.Id))
+                    {
+                        user.BasketItems.FirstOrDefault(b => b.PlantId == item.Id).Quantity += item.Quantity;
+                        continue;
+                    }
+                    Plant existed = _context.Plants.FirstOrDefault(p => p.Id == item.Id);
+                    if (existed is null) return NotFound();
+
+                    BasketItem basketItem = new BasketItem
+                    {
+                        Quantity = item.Quantity,
+                        Plant = existed,
+                        AppUser = user,
+                        Price = existed.Price
+                    };
+                    _context.BasketItems.Add(basketItem);
+
+                    // layout service den instance almaqimin sebebi odur ki, normalda login olanda cookie deki datalardan basketItem yaradiriq(Database) amma bunlar basket e dushmur. Bunun uchun getBasket() metodunu cagiririq. 
+                    LayoutService layoutService = new LayoutService(_context, _http, _userManager);
+                    await layoutService.GetBasket();
+                }
+                HttpContext.Response.Cookies.Delete("Basket");
+                _context.SaveChanges();
+            }
+            
+            return RedirectToAction("Index", "Home");
+
         }
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
+        }
+
+        public JsonResult ShowAuthentication()
+        {
+            return Json(User.Identity.IsAuthenticated);
+        }
+
+        public async Task CreateRoles()
+        {
+            await _roleInManager.CreateAsync(new IdentityRole("Member"));
+            await _roleInManager.CreateAsync(new IdentityRole("Moderator"));
+            await _roleInManager.CreateAsync(new IdentityRole("Admin"));
         }
     }
 }

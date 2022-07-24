@@ -16,8 +16,7 @@ namespace Backend_Homework_Pronia.Models
         public Plant Plant { get; set; }
         //[NotMapped]
         //public List<int> ImageIds { get; set; }
-        [NotMapped]
-        public int ImageId { get; set; }
+      
 
     }
 }

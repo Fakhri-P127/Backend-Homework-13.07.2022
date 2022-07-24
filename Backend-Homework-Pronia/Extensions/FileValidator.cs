@@ -1,6 +1,8 @@
 ﻿using Backend_Homework_Pronia.DAL;
+using Backend_Homework_Pronia.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,18 +13,41 @@ namespace Backend_Homework_Pronia.Extensions
 {
     public static class FileValidator
     {
-        public static async Task<string> FileCreate(this IFormFile file,string root,string folder)
+       
+        public static async Task<string> FileCreate(this IFormFile file, string root,string folder,DbSet<Slider> sliders=null, DbSet<PlantImage> pImages = null)
         {
-            //string filename = "";
-            //bool isSame = data.Sliders.Any(s => s.Photo.FileName == file.FileName);
-            //if (isSame)
+            string filename = string.Empty;
+            //Bele ishleyir amma baglamamin sebebi eyni papkadan image goturende gedib override edir ve silende o shekil hemishelik gedir.
+
+            //if (sliders != null)
             //{
-             string   filename = string.Concat(Guid.NewGuid(), file.FileName);
+            //    bool isSame = sliders.Any(s =>s.Image == file.FileName);
+            //    if (isSame)
+            //    {
+            //        filename = string.Concat(Guid.NewGuid(), file.FileName);
+            //    }
+            //    else
+            //    {
+            //        filename = file.FileName;
+            //    }
+
             //}
-            //else
+
+            //if (pImages != null)
             //{
-                filename = file.FileName;
+
+            //    bool isSame = pImages.Any(p => p.Name == file.FileName);
+            //    if (isSame)
+            //    {
+            //        filename = string.Concat(Guid.NewGuid(), file.FileName);
+            //    }
+            //    else
+            //    {
+            //        filename = file.FileName;
+            //    }
             //}
+            filename = string.Concat(Guid.NewGuid(), file.FileName);
+
             string path = Path.Combine(root, folder);
             string filePath = Path.Combine(path, filename);
 
@@ -52,12 +77,8 @@ namespace Backend_Homework_Pronia.Extensions
         }
         public static bool IsImageOkay(this IFormFile file, int mb)
         {
-
             return file.Length / 1024 / 1024 < mb && file.ContentType.Contains("image/");
-
         }
-
-       
     }
 
 }

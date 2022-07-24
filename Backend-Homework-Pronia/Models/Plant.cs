@@ -31,5 +31,7 @@ namespace Backend_Homework_Pronia.Models
         public List<IFormFile> DetailPhotos { get; set; }
         [NotMapped]
         public List<int> CategoryIds { get; set; }
+        [NotMapped]
+        public List<int> ImageIds { get; set; }
     }
 }

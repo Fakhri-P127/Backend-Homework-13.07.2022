@@ -7,15 +7,13 @@
 <div class="main-panel">
     <h1>Edit plant</h1>
     <div >
-
-
         <div class="image my-4">
             <h3>Main image</h3>
-            <img width="300" src="~/assets/images/website-images/@Model.PlantImages?.FirstOrDefault(p => p.IsMain == true)?.Name" alt="main" />
+            <img width="300" src="~/assets/images/website-images/@Model.PlantImages.FirstOrDefault(p => p.IsMain == true)?.Name" alt="main" />
         </div>
         <div class="image my-4">
             <h3>Hover image</h3>
-            <img width="300" src="~/assets/images/website-images/@Model.PlantImages?.FirstOrDefault(p => p.IsMain == null)?.Name" alt="null" />
+            <img width="300" src="~/assets/images/website-images/@Model.PlantImages.FirstOrDefault(p => p.IsMain == null)?.Name" alt="null" />
         </div>
         <div id="detailContent" class="d-flex">
 
@@ -27,7 +25,6 @@
                 <h3>Detail image</h3>
                 <small class="removeBtn" style="font-weight:bold;color:crimson;cursor:pointer;">Remove</small>
                 <div  class="image ">
-
                     <img width="300" src="~/assets/images/website-images/@item.Name" alt="detail" />
                 </div>
             </div>
@@ -38,14 +35,16 @@
     <form class="mt-3" method="post" enctype="multipart/form-data">
         <div class="alert alert-danger" asp-validation-summary="ModelOnly"></div>
 
-        @foreach (var pImage in Model.PlantImages?.Where(p => p.IsMain == false))
+        @foreach (var pImage in Model.PlantImages.Where(p => p.IsMain == false))
         {
-            <div class="@pImage.Id">
-                <label>Image Id data:</label><br />
-                <input asp-for="@pImage.ImageId" value="@pImage.Id" class="form-control" /><br />
-                <span class="text-danger" asp-validation-for="@pImage.ImageId"></span>
-            </div>
+    <div class="@pImage.Id">
+        
+        <input type="hidden" name="ImageIds" value="@pImage.Id" />
+
+        <span class="text-danger" asp-validation-for="ImageIds"></span>
+    </div>
         }
+     
         <div>
             <label>Main image:</label><br />
             <input asp-for="MainPhoto" class="form-control" /><br />
@@ -88,7 +87,19 @@
         </div>
         <div>
             <label>Plant information:</label><br />
-            <select class="form-control" asp-for="CategoryIds" asp-items="@(new SelectList(ViewBag.Categories, "Id", "Name"))">
+            <select class="form-control" asp-for="CategoryIds">
+                @foreach (Category category in ViewBag.Categories)
+                {
+                    if (Model.PlantCategories.Any(c => c.CategoryId == category.Id))
+                    {
+                        <option value="@category.Id" selected>@category.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@category.Id">@category.Name</option>
+                    }
+
+                }
             </select>
         </div>
         <div class="mt-2">
@@ -96,26 +107,29 @@
         </div>
     </form>
 </div>
-<script>
 
-    const removeBtnElement = document.querySelectorAll(".removeBtn");
-    console.log(removeBtnElement);
-    const detailContentDiv = document.querySelector("#detailContent");
-    console.log(detailContentDiv);
-    const form = document.querySelector("form");
-    removeBtnElement.forEach(btn => btn.addEventListener("click", (e) => {
+@section Scripts{ 
+    <script>
 
-        const ImageDiv = btn.closest(".imageId");
-        console.log(ImageDiv);
-        const oldId = ImageDiv.id;
-        console.log(oldId);
+        const removeBtnElement = document.querySelectorAll(".removeBtn");
+        console.log(removeBtnElement);
+        const detailContentDiv = document.querySelector("#detailContent");
+        console.log(detailContentDiv);
+        const form = document.querySelector("form");
+        removeBtnElement.forEach(btn => btn.addEventListener("click", (e) => {
 
-        let plantImageDiv = document.getElementsByClassName(oldId);
+            const ImageDiv = btn.closest(".imageId");
+            console.log(ImageDiv);
+            const oldId = ImageDiv.id;
+            console.log(oldId);
 
-        plantImageDiv = plantImageDiv[0];
-        console.log(plantImageDiv);
-        form.removeChild(plantImageDiv);
-       
-        detailContentDiv.removeChild(ImageDiv);
-    }));
-</script>
+            let plantImageDiv = document.getElementsByClassName(oldId);
+
+            plantImageDiv = plantImageDiv[0];
+            console.log(plantImageDiv);
+            form.removeChild(plantImageDiv);
+
+            detailContentDiv.removeChild(ImageDiv);
+        }));
+    </script>
+}

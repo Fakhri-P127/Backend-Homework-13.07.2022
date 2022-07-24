@@ -1,6 +1,7 @@
 ﻿using Backend_Homework_Pronia.DAL;
 using Backend_Homework_Pronia.Models;
 using Backend_Homework_Pronia.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -14,16 +15,17 @@ namespace Backend_Homework_Pronia.Controllers
     public class PlantController:Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<AppUser> _userManager;
 
-        public PlantController(ApplicationDbContext context)
+        public PlantController(ApplicationDbContext context,UserManager<AppUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
         public async Task<IActionResult> Detail(int? id)
         {
             if (id is null || id == 0) return NotFound();
 
-            #region model
             PlantVM model = new PlantVM
             {
                 Plant = await _context.Plants.Include(p => p.PlantImages)
@@ -34,15 +36,8 @@ namespace Backend_Homework_Pronia.Controllers
                 Include(p => p.PlantTags).ThenInclude(p => p.Tag)
                 .FirstOrDefaultAsync(p => p.Id == id),
                 Plants= new List<Plant>()
-                //Plants = await _context.Plants.Include(p => p.PlantImages)
-                //.Include(p => p.PlantInformation).Include(p => p.PlantColors)
-                //.Include(p => p.PlantSizes).Include(p => p.PlantCategories)
-                //.ThenInclude(p => p.Category).Include(p => p.PlantColors).ThenInclude(p => p.Color)
-                //.Include(p => p.PlantSizes).ThenInclude(p => p.Size).
-                //Include(p => p.PlantTags).ThenInclude(p => p.Tag).ToListAsync()
             };
-            #endregion
-
+            
             if (model.Plant is null) return NotFound();
             List<Plant> plants = new List<Plant>();
             foreach (PlantCategory pCategory in model.Plant.PlantCategories)
@@ -70,52 +65,81 @@ namespace Backend_Homework_Pronia.Controllers
         {
             if (id is null || id == 0) return NotFound();
 
+
             Plant plant = await _context.Plants.FirstOrDefaultAsync(p => p.Id == id);
 
             if (plant is null) return NotFound();
 
-            string basketStr = HttpContext.Request.Cookies["Basket"];
+          
 
-            BasketVM basket;
-
-            if (string.IsNullOrEmpty(basketStr))
+            if (User.Identity.IsAuthenticated && User.IsInRole("Member"))
             {
-                basket =  new BasketVM();
-                BasketCookieItemVM basketCookieItem = new BasketCookieItemVM
+                AppUser user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+                if (user is null) return NotFound();
+                user.BasketItems = await _context.BasketItems.Include(b=>b.Plant).Include(b=>b.AppUser).Where(b => b.AppUserId == user.Id).ToListAsync();
+
+                BasketItem existed = await _context.BasketItems.FirstOrDefaultAsync(b => b.PlantId == plant.Id && user.Id == b.AppUserId);
+                if(existed is null)
                 {
-                    Id = plant.Id,
-                    Quantity = 1
-                };
-                basket.BasketCookieItemVMs = new List<BasketCookieItemVM>();
-                basket.BasketCookieItemVMs.Add(basketCookieItem);
-                basket.TotalPrice = plant.Price;
+                    existed = new BasketItem
+                    {
+                        AppUser = user,
+                        Plant=plant,
+                        Quantity=1,
+                        Price=plant.Price
+                    };
+                    user.BasketItems.Add(existed);
+                }
+                else
+                {
+                    existed.Quantity++;
+                }
+                await _context.SaveChangesAsync();
             }
             else
             {
-                basket = JsonConvert.DeserializeObject<BasketVM>(basketStr);
-                BasketCookieItemVM existed = basket.BasketCookieItemVMs.FirstOrDefault(p => p.Id == id);
-                
-                if(existed is null)
+                string basketStr = HttpContext.Request.Cookies["Basket"];
+                BasketVM basket;
+
+                if (string.IsNullOrEmpty(basketStr))
                 {
+                    basket = new BasketVM();
                     BasketCookieItemVM basketCookieItem = new BasketCookieItemVM
                     {
                         Id = plant.Id,
                         Quantity = 1
                     };
-                    
+                    basket.BasketCookieItemVMs = new List<BasketCookieItemVM>();
                     basket.BasketCookieItemVMs.Add(basketCookieItem);
-                    basket.TotalPrice +=plant.Price;
+                    basket.TotalPrice = plant.Price;
                 }
                 else
                 {
-                    basket.TotalPrice += plant.Price * ++existed.Quantity;
-                    //basket.TotalPrice += plant.Price;
-                    //existed.Quantity++;
+                    basket = JsonConvert.DeserializeObject<BasketVM>(basketStr);
+                    BasketCookieItemVM existed = basket.BasketCookieItemVMs.FirstOrDefault(p => p.Id == id);
+
+                    if (existed is null)
+                    {
+                        BasketCookieItemVM basketCookieItem = new BasketCookieItemVM
+                        {
+                            Id = plant.Id,
+                            Quantity = 1
+                        };
+
+                        basket.BasketCookieItemVMs.Add(basketCookieItem);
+                        basket.TotalPrice += plant.Price;
+                    }
+                    else
+                    {
+                        basket.TotalPrice += plant.Price;
+                        existed.Quantity++;
+                    }
                 }
+
+                basketStr = JsonConvert.SerializeObject(basket);
+                HttpContext.Response.Cookies.Append("Basket", basketStr);
             }
-           
-            basketStr = JsonConvert.SerializeObject(basket);
-            HttpContext.Response.Cookies.Append("Basket", basketStr);
             return RedirectToAction("Index","Home");
         }
 

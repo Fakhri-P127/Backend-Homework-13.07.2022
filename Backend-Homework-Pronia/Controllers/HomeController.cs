@@ -20,6 +20,15 @@ namespace Backend_Homework_Pronia.Controllers
         }
         public IActionResult Index()
         {
+
+            // Isteyirdim ki guest uchun cookie de Id yaradim amma AspUserNet de foreign key di deye error verdi
+            //string userIdStr = HttpContext.Request.Cookies["UserId"];
+            //if (string.IsNullOrEmpty(userIdStr))
+            //{
+            //    HttpContext.Response.Cookies.Append("UserId", Guid.NewGuid().ToString());
+            //}
+           
+
             HomeVM model = new HomeVM
             {
                 Sliders = _context.Sliders.ToList(),

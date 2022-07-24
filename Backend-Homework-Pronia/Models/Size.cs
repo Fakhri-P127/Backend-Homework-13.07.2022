@@ -13,6 +13,9 @@ namespace Backend_Homework_Pronia.Models
 
         public string Name { get; set; }
         public List<PlantSize> PlantSizes { get; set; }
+        //public int ColorId { get; set; }
+        //public Color Color { get; set; }
+
 
     }
 }

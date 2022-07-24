@@ -7,13 +7,11 @@
     <div>
         <a asp-area="proniaadmin" asp-controller="plant" asp-action="Create" class="btn btn-outline-success">Create new plant</a>
     </div>
-    @if ((string)TempData["FileName"] != "")
+    @if (TempData["FileName"] != null)
     {
-        <div class="alert alert-danger">
-            @TempData["FileName"] couldn't upload 
-        </div>
+        <div class="alert alert-danger">@TempData["FileName"] files could not upload due to restrictions.</div>
     }
-
+  
     <div class="table-responsive pt-3">
         <table class="table table-dark">
             <thead>
@@ -46,7 +44,7 @@
                         </td>
                         <td>@plant.Name</td>
                         <td>@plant.Price</td>
-                        <td>
+                        <td style="word-wrap:break-word">
                             @{
                                 int lastCategoryId = plant.PlantCategories.LastOrDefault().Id;
                             }
@@ -54,21 +52,6 @@
                             {
                                 @plantCategory.Category.Name@(plantCategory.Id != lastCategoryId ? "," : "")
                             }
-
-
-                            @*@if (plant.PlantCategories.Count > 3)
-                                {
-                                    @foreach (PlantCategory plantCategory in plant.PlantCategories)
-                                    {
-                                        @plantCategory.Category.Name@(plantCategory.Id != lastCategoryId ? "," : "...")
-                                    }
-                                }*@
-                            @*else
-                                {*@
-
-                            @*}*@
-
-
                         </td>
                         @*<td>@plant.Desc</td>*@
                         <td>@plant.SKU</td>
@@ -98,3 +81,19 @@
     </div>
 
 </div>
+@*@section AlertScript{ 
+
+<script>
+
+    const removeBtnElements = document.querySelectorAll(".mdi-delete");
+
+    removeBtnElements.forEach(btn => btn.addEventListener("click", (e) =>
+    {
+        e.preventDefault();
+        const confirm = confirm("Do you really want to delete this?");
+        if (!confirm) return;
+
+    }))
+
+</script>
+}*@

@@ -49,7 +49,7 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
 
            
             // _context gonderirem cunki eyni adda image olmasini yoxlamaq ucun lazimdi ve extension klasi static oldugu ucun _context ishletmek olmur
-            slider.Image = await slider.Photo.FileCreate (_env.WebRootPath,"assets/images/slider");
+            slider.Image = await slider.Photo.FileCreate (_env.WebRootPath,"assets/images/slider",_context.Sliders);
             await _context.Sliders.AddAsync(slider);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));      
@@ -88,7 +88,7 @@ namespace Backend_Homework_Pronia.Areas.ProniaAdmin.Controllers
 
                 FileValidator.FileDelete(_env.WebRootPath, "assets/images/slider", currSlider.Image);
                 _context.Entry(currSlider).CurrentValues.SetValues(newSlider);
-                currSlider.Image = await newSlider.Photo.FileCreate(_env.WebRootPath, "assets/images/slider");
+                currSlider.Image = await newSlider.Photo.FileCreate(_env.WebRootPath, "assets/images/slider", _context.Sliders);
 
             }
 
